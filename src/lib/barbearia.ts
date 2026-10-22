@@ -15,8 +15,6 @@ export const SERVICOS: Servico[] = [
   { id: "luzes", nome: "Luzes / Platinado", preco: 150, desc: "Descoloração completa com tonalização.", min: 120 },
 ];
 
-// index = getDay(); null = fechado
-export const HORARIOS: { dia: string; abre: string; fecha: string } [] | null[] = [];
 export const FUNCIONAMENTO: ({ dia: string; abre: string; fecha: string } | { dia: string; abre: null; fecha: null })[] = [
   { dia: "Domingo", abre: null, fecha: null },
   { dia: "Segunda", abre: "09:00", fecha: "20:00" },
