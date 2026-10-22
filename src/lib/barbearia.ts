@@ -29,7 +29,7 @@ export const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency",
 export const dur = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}min` : ""}` : `${m} min`);
 
 export function slots(date: Date): string[] {
-  const f = FUNCIONAMENTO[date.getDay()];
+  const f = FUNCIONAMENTO[date.getDay()]!;
   if (!f.abre) return [];
   const toMin = (s: string) => +s.slice(0, 2) * 60 + +s.slice(3);
   const out: string[] = [];

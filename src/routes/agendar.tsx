@@ -4,7 +4,7 @@ import { Header, WhatsFab } from "@/components/Header";
 import { SERVICOS, brl, dur, slots, waLink, FUNCIONAMENTO } from "@/lib/barbearia";
 
 export const Route = createFileRoute("/agendar")({
-  validateSearch: (s: Record<string, unknown>) => ({ servico: typeof s.servico === "string" ? s.servico : undefined }),
+  validateSearch: (s: Record<string, unknown>): { servico?: string } => ({ servico: typeof s["servico"] === "string" ? (s["servico"] as string) : undefined }),
   head: () => ({
     meta: [
       { title: "Agendar horário — A Marca da Promessa" },
@@ -59,7 +59,7 @@ function Agendar() {
         <h2 className="mt-10 text-2xl">2. Dia</h2>
         <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
           {dias.map((x, i) => {
-            const fechado = !FUNCIONAMENTO[x.getDay()].abre;
+            const fechado = !FUNCIONAMENTO[x.getDay()]?.abre;
             return (
               <button key={i} disabled={fechado} onClick={() => { setDia(i); setHora(undefined); }} className={`${chip(dia === i)} min-w-16 text-center disabled:opacity-30`}>
                 <div className="text-xs uppercase">{x.toLocaleDateString("pt-BR", { weekday: "short" })}</div>
