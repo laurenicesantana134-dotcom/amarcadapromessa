@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Crown, CalendarCheck, MessageCircle } from "lucide-react";
+import { Crown, CalendarCheck, MessageCircle, User } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { waLink } from "@/lib/barbearia";
 
 export function Header() {
+  const { user, carregando } = useAuth();
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
@@ -13,9 +15,16 @@ export function Header() {
             <span className="font-serif text-lg text-primary">A Marca da Promessa</span>
           </span>
         </Link>
-        <Link to="/agendar" className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-4 py-2 text-sm font-semibold text-primary-foreground shadow-gold">
+        <div className="flex items-center gap-2">
+        {!carregando && (
+          <Link to={user ? "/conta" : "/entrar"} className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold">
+            <User className="h-4 w-4" /> {user ? "Minha conta" : "Criar cadastro"}
+          </Link>
+        )}
+        <Link to="/agendar" search={{}} className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-4 py-2 text-sm font-semibold text-primary-foreground shadow-gold">
           <CalendarCheck className="h-4 w-4" /> Agendar
         </Link>
+        </div>
       </div>
     </header>
   );
