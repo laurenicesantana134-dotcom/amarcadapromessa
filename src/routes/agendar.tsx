@@ -31,7 +31,7 @@ function Agendar() {
   }, []);
 
   const s = SERVICOS.find((x) => x.id === sel);
-  const horarios = useMemo(() => (dias[dia] ? slots(dias[dia]) : []), [dias, dia]);
+  const horarios = useMemo(() => (dias[dia] ? slots(dias[dia], s?.min ?? 30) : []), [dias, dia, s]);
   const d = dias[dia];
   const msg = s && d && hora
     ? `Olá! Sou ${nome || "cliente"} e quero agendar: ${s.nome} (${brl(s.preco)}) em ${d.toLocaleDateString("pt-BR")} às ${hora}.`

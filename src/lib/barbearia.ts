@@ -5,38 +5,47 @@ export const waLink = (text = "Olá, quero atendimento") =>
 export type Servico = { id: string; nome: string; preco: number; desc: string; min: number };
 
 export const SERVICOS: Servico[] = [
-  { id: "corte", nome: "Corte Masculino", preco: 40, desc: "Corte na tesoura ou máquina, finalizado com pomada.", min: 40 },
-  { id: "barba", nome: "Barba Completa", preco: 30, desc: "Toalha quente, navalha e hidratação com óleo.", min: 30 },
-  { id: "combo", nome: "Corte + Barba", preco: 65, desc: "O combo completo para sair renovado.", min: 60 },
-  { id: "fade", nome: "Degradê / Fade", preco: 45, desc: "Degradê navalhado com acabamento preciso.", min: 45 },
-  { id: "pezinho", nome: "Pezinho", preco: 15, desc: "Acabamento do contorno entre um corte e outro.", min: 15 },
-  { id: "sobrancelha", nome: "Sobrancelha", preco: 15, desc: "Limpeza e alinhamento na navalha.", min: 15 },
-  { id: "pigmentacao", nome: "Pigmentação", preco: 35, desc: "Pigmentação de barba ou cabelo para preencher falhas.", min: 30 },
-  { id: "luzes", nome: "Luzes / Platinado", preco: 150, desc: "Descoloração completa com tonalização.", min: 120 },
+  { id: "navalhado-barba", nome: "Corte Navalhado + Barba", preco: 35, desc: "Corte navalhado com barba completa.", min: 60 },
+  { id: "social-barba", nome: "Corte Social + Barba", preco: 35, desc: "Corte social com barba completa.", min: 60 },
+  { id: "corte-barba-pigmentacao", nome: "Corte, Barba + Pigmentação", preco: 50, desc: "Combo completo com pigmentação.", min: 90 },
+  { id: "pe-barba", nome: "Pé + Barba", preco: 15, desc: "Acabamento do contorno e barba.", min: 30 },
+  { id: "nevou", nome: "Nevou", preco: 130, desc: "Descoloração total no estilo nevou.", min: 120 },
+  { id: "barba", nome: "Barba", preco: 10, desc: "Barba na navalha.", min: 30 },
+  { id: "pezinho", nome: "Pezinho", preco: 10, desc: "Acabamento do contorno.", min: 30 },
+  { id: "navalhado", nome: "Corte Navalhado", preco: 30, desc: "Corte com acabamento na navalha.", min: 30 },
+  { id: "social", nome: "Corte Social", preco: 30, desc: "Corte social clássico.", min: 30 },
+  { id: "corte-luzes", nome: "Corte + Luzes", preco: 75, desc: "Corte com luzes.", min: 90 },
+  { id: "manutencao-protese", nome: "Manutenção Prótese Capilar", preco: 150, desc: "Manutenção da prótese capilar.", min: 90 },
+  { id: "aplicacao-protese", nome: "Aplicação Prótese Capilar", preco: 2000, desc: "Aplicação completa de prótese capilar.", min: 180 },
+  { id: "protese-fio-a-fio", nome: "Prótese capilar fio a fio", preco: 500, desc: "Prótese capilar fio a fio.", min: 120 },
 ];
 
+// índice = dia da semana (0 = domingo)
 export const FUNCIONAMENTO: ({ dia: string; abre: string; fecha: string } | { dia: string; abre: null; fecha: null })[] = [
-  { dia: "Domingo", abre: null, fecha: null },
-  { dia: "Segunda", abre: "09:00", fecha: "20:00" },
+  { dia: "Domingo", abre: "09:00", fecha: "20:00" },
+  { dia: "Segunda", abre: null, fecha: null },
   { dia: "Terça", abre: "09:00", fecha: "20:00" },
   { dia: "Quarta", abre: "09:00", fecha: "20:00" },
   { dia: "Quinta", abre: "09:00", fecha: "20:00" },
   { dia: "Sexta", abre: "09:00", fecha: "20:00" },
-  { dia: "Sábado", abre: "08:00", fecha: "18:00" },
+  { dia: "Sábado", abre: "09:00", fecha: "20:00" },
 ];
+
+export const ALMOCO = { inicio: "12:00", fim: "13:00" };
 
 export const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 export const dur = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}min` : ""}` : `${m} min`);
 
-export function slots(date: Date): string[] {
+export function slots(date: Date, duracao = 30, agora = new Date()): string[] {
   const f = FUNCIONAMENTO[date.getDay()]!;
   if (!f.abre) return [];
   const toMin = (s: string) => +s.slice(0, 2) * 60 + +s.slice(3);
   const out: string[] = [];
-  const now = new Date();
-  for (let m = toMin(f.abre); m < toMin(f.fecha!); m += 30) {
+  const almIni = toMin(ALMOCO.inicio), almFim = toMin(ALMOCO.fim);
+  for (let m = toMin(f.abre); m + duracao <= toMin(f.fecha!); m += 30) {
+    if (m < almFim && m + duracao > almIni) continue;
     const d = new Date(date); d.setHours(Math.floor(m / 60), m % 60, 0, 0);
-    if (d > now) out.push(`${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`);
+    if (d > agora) out.push(`${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`);
   }
   return out;
 }

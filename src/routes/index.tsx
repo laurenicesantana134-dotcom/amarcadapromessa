@@ -95,7 +95,7 @@ function Index() {
         <ul className="mt-8 divide-y divide-border rounded-2xl border border-border bg-card">
           {FUNCIONAMENTO.map((f, i) => (
             <li key={f.dia} className={`flex justify-between px-6 py-4 ${i === hoje ? "bg-gold-soft text-primary" : ""}`}>
-              <span>{f.dia}</span><span className={f.abre ? "" : "text-muted-foreground"}>{f.abre ? `${f.abre} – ${f.fecha}` : "Fechado"}</span>
+              <span>{f.dia}</span>{f.abre && <span className="hidden text-xs text-muted-foreground sm:inline">almoço 12:00–13:00</span>}<span className={f.abre ? "" : "text-muted-foreground"}>{f.abre ? `${f.abre} – ${f.fecha}` : "Fechado"}</span>
             </li>
           ))}
         </ul>
