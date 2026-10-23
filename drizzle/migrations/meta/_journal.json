@@ -15,6 +15,13 @@
       "when": 1792716182532,
       "tag": "0001_agendamentos",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792716276405,
+      "tag": "0002_whatsapp",
+      "breakpoints": true
     }
   ]
 }
