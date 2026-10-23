@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      agendamentos: {
+        Row: {
+          cliente_id: string
+          cliente_nome: string
+          cliente_whatsapp: string
+          created_at: string
+          fim: string
+          id: string
+          inicio: string
+          lembrete_enviado: boolean
+          observacao: string | null
+          preco: number
+          servico_id: string
+          servico_nome: string
+          status: string
+        }
+        Insert: {
+          cliente_id: string
+          cliente_nome: string
+          cliente_whatsapp: string
+          created_at?: string
+          fim: string
+          id?: string
+          inicio: string
+          lembrete_enviado?: boolean
+          observacao?: string | null
+          preco: number
+          servico_id: string
+          servico_nome: string
+          status?: string
+        }
+        Update: {
+          cliente_id?: string
+          cliente_nome?: string
+          cliente_whatsapp?: string
+          created_at?: string
+          fim?: string
+          id?: string
+          inicio?: string
+          lembrete_enviado?: boolean
+          observacao?: string | null
+          preco?: number
+          servico_id?: string
+          servico_nome?: string
+          status?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           apelido: string
@@ -70,6 +118,13 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      horarios_ocupados: {
+        Args: { _ate: string; _de: string }
+        Returns: {
+          fim: string
+          inicio: string
+        }[]
       }
       indicar_dono: { Args: { _whatsapp: string }; Returns: string }
     }
