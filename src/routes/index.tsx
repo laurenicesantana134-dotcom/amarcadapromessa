@@ -3,16 +3,22 @@ import { ArrowRight, Scissors, CalendarDays, MessageCircle, Clock } from "lucide
 import hero from "@/assets/hero.jpg";
 import tools from "@/assets/tools.jpg";
 import interior from "@/assets/interior.jpg";
+import logo from "@/assets/logo.jpg";
 import { Header, WhatsFab } from "@/components/Header";
+import { InstalarApp } from "@/components/InstalarApp";
 import { SERVICOS, FUNCIONAMENTO, brl, dur, waLink } from "@/lib/barbearia";
+
+const OG = "https://amarcadapromessa.lovable.app/og-logo.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "A Marca da Promessa — Barbearia clássica" },
       { name: "description", content: "Corte, barba e acabamento na navalha. Agende seu horário online em menos de um minuto." },
-      { property: "og:title", content: "A Marca da Promessa — Barbearia clássica" },
-      { property: "og:description", content: "Corte, barba e acabamento na navalha. Agende online." },
+      { property: "og:title", content: "Barbearia A Marca da Promessa" },
+      { property: "og:description", content: "Corte, barba, prótese capilar e acabamento na navalha. Agende online." },
+      { property: "og:image", content: OG },
+      { name: "twitter:image", content: OG },
     ],
   }),
   component: Index,
@@ -20,8 +26,8 @@ export const Route = createFileRoute("/")({
 
 const passos = [
   { n: "01", t: "Escolha o serviço", d: "Corte, barba, combo ou acabamento.", I: Scissors },
-  { n: "02", t: "Dia e horário", d: "Só aparecem os horários livres.", I: CalendarDays },
-  { n: "03", t: "Confirme no WhatsApp", d: "Sua reserva chega direto pra gente.", I: MessageCircle },
+  { n: "02", t: "Dia e horário", d: "Veja na hora o que está livre.", I: CalendarDays },
+  { n: "03", t: "Pronto", d: "Seu horário fica reservado na agenda.", I: MessageCircle },
 ];
 
 function Index() {
@@ -34,12 +40,14 @@ function Index() {
         <div className="absolute inset-0 bg-gradient-side" />
         <div className="absolute inset-0 bg-gradient-hero" />
         <div className="relative mx-auto w-full max-w-6xl px-5 py-20">
+          <img src={logo} alt="Logo da Barbearia A Marca da Promessa" className="mb-6 h-40 w-40 rounded-full shadow-gold md:h-52 md:w-52" />
           <p className="text-xs font-semibold tracking-[0.3em] text-primary">BARBEARIA CLÁSSICA · AGENDAMENTO ONLINE</p>
           <h1 className="mt-5 text-6xl leading-[0.95] md:text-7xl">A Marca<br /><em className="text-gradient-gold">da Promessa</em></h1>
           <p className="mt-6 max-w-md text-lg text-muted-foreground">Corte, barba e acabamento na navalha. Escolha seu horário em menos de um minuto — sem ligação, sem espera.</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/agendar" className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-7 py-4 font-semibold text-primary-foreground shadow-gold">Agendar horário <ArrowRight className="h-4 w-4" /></Link>
             <a href={waLink()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-primary/40 px-7 py-4 font-semibold"><MessageCircle className="h-4 w-4 text-whatsapp" /> Falar no WhatsApp</a>
+            <InstalarApp />
           </div>
         </div>
       </section>

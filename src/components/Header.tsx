@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Crown, CalendarCheck, MessageCircle, User } from "lucide-react";
+import { CalendarCheck, MessageCircle, User } from "lucide-react";
+import logo from "@/assets/logo.jpg";
 import { useAuth } from "@/hooks/useAuth";
 import { waLink } from "@/lib/barbearia";
 
@@ -9,7 +10,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
         <Link to="/" className="flex items-center gap-3">
-          <span className="grid h-9 w-9 place-items-center rounded-full border border-primary/40 bg-gold-soft text-primary"><Crown className="h-4 w-4" /></span>
+          <img src={logo} alt="Logo A Marca da Promessa" className="h-11 w-11 rounded-full" />
           <span className="leading-tight">
             <span className="block text-[10px] tracking-[0.3em] text-muted-foreground">BARBEARIA</span>
             <span className="font-serif text-lg text-primary">A Marca da Promessa</span>
