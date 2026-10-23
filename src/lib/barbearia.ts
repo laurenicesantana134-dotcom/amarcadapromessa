@@ -36,16 +36,25 @@ export const ALMOCO = { inicio: "12:00", fim: "13:00" };
 export const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 export const dur = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}min` : ""}` : `${m} min`);
 
-export function slots(date: Date, duracao = 30, agora = new Date()): string[] {
+export type Horario = { hora: string; inicio: Date; fim: Date; livre: boolean };
+
+// Todos os horários do expediente; passados ou ocupados vêm com livre = false.
+export function grade(date: Date, duracao = 30, agora = new Date(), ocupados: { inicio: Date; fim: Date }[] = []): Horario[] {
   const f = FUNCIONAMENTO[date.getDay()]!;
   if (!f.abre) return [];
   const toMin = (s: string) => +s.slice(0, 2) * 60 + +s.slice(3);
-  const out: string[] = [];
+  const out: Horario[] = [];
   const almIni = toMin(ALMOCO.inicio), almFim = toMin(ALMOCO.fim);
   for (let m = toMin(f.abre); m + duracao <= toMin(f.fecha!); m += 30) {
     if (m < almFim && m + duracao > almIni) continue;
-    const d = new Date(date); d.setHours(Math.floor(m / 60), m % 60, 0, 0);
-    if (d > agora) out.push(`${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`);
+    const ini = new Date(date); ini.setHours(Math.floor(m / 60), m % 60, 0, 0);
+    const fim = new Date(ini.getTime() + duracao * 60000);
+    const livre = ini > agora && !ocupados.some((o) => o.inicio < fim && o.fim > ini);
+    out.push({ hora: `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`, inicio: ini, fim, livre });
   }
   return out;
+}
+
+export function slots(date: Date, duracao = 30, agora = new Date()): string[] {
+  return grade(date, duracao, agora).filter((h) => h.livre).map((h) => h.hora);
 }
