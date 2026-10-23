@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      agendamentos: {
+        Row: {
+          cliente_id: string
+          cliente_nome: string
+          cliente_whatsapp: string
+          created_at: string
+          fim: string
+          id: string
+          inicio: string
+          lembrete_enviado: boolean
+          observacao: string | null
+          preco: number
+          servico_id: string
+          servico_nome: string
+          status: string
+        }
+        Insert: {
+          cliente_id: string
+          cliente_nome: string
+          cliente_whatsapp: string
+          created_at?: string
+          fim: string
+          id?: string
+          inicio: string
+          lembrete_enviado?: boolean
+          observacao?: string | null
+          preco: number
+          servico_id: string
+          servico_nome: string
+          status?: string
+        }
+        Update: {
+          cliente_id?: string
+          cliente_nome?: string
+          cliente_whatsapp?: string
+          created_at?: string
+          fim?: string
+          id?: string
+          inicio?: string
+          lembrete_enviado?: boolean
+          observacao?: string | null
+          preco?: number
+          servico_id?: string
+          servico_nome?: string
+          status?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           apelido: string
@@ -59,6 +107,75 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_mensagens: {
+        Row: {
+          agendamento_id: string | null
+          created_at: string
+          erro: string | null
+          id: string
+          para: string
+          status: string
+          status_em: string | null
+          tipo: string
+          wa_id: string | null
+        }
+        Insert: {
+          agendamento_id?: string | null
+          created_at?: string
+          erro?: string | null
+          id?: string
+          para: string
+          status?: string
+          status_em?: string | null
+          tipo: string
+          wa_id?: string | null
+        }
+        Update: {
+          agendamento_id?: string | null
+          created_at?: string
+          erro?: string | null
+          id?: string
+          para?: string
+          status?: string
+          status_em?: string | null
+          tipo?: string
+          wa_id?: string | null
+        }
+        Relationships: []
+      }
+      whatsapp_webhook_events: {
+        Row: {
+          delivery_id: string
+          event: string
+          id: string
+          payload: Json
+          processed_at: string | null
+          processing_error: string | null
+          received_at: string
+          tentativas: number
+        }
+        Insert: {
+          delivery_id: string
+          event: string
+          id?: string
+          payload: Json
+          processed_at?: string | null
+          processing_error?: string | null
+          received_at?: string
+          tentativas?: number
+        }
+        Update: {
+          delivery_id?: string
+          event?: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          processing_error?: string | null
+          received_at?: string
+          tentativas?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -70,6 +187,13 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      horarios_ocupados: {
+        Args: { _ate: string; _de: string }
+        Returns: {
+          fim: string
+          inicio: string
+        }[]
       }
       indicar_dono: { Args: { _whatsapp: string }; Returns: string }
     }

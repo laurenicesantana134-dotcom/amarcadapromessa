@@ -4,6 +4,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { emailDoWhats, soDigitos } from "@/hooks/useAuth";
+import { notificarCadastro } from "@/lib/notificacoes.functions";
 
 export const Route = createFileRoute("/entrar")({
   head: () => ({
@@ -49,6 +50,7 @@ function Entrar() {
           options: { emailRedirectTo: window.location.origin, data: { nome: r.data.nome, apelido: r.data.apelido, whatsapp: w } },
         });
         if (error) { setErro(error.message.includes("registered") ? "Esse WhatsApp já tem cadastro. Use Entrar." : error.message); return; }
+        notificarCadastro().catch(() => {});
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email: emailDoWhats(f.whatsapp), password: f.senha });
         if (error) { setErro("WhatsApp ou senha incorretos."); return; }
