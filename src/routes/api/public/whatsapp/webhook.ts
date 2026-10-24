@@ -26,7 +26,7 @@ export const Route = createFileRoute("/api/public/whatsapp/webhook")({
 
         const { data: existente } = await supabaseAdmin
           .from("whatsapp_webhook_events")
-          .select("id,processed_at")
+          .select("id,processed_at,tentativas")
           .eq("delivery_id", deliveryId)
           .maybeSingle();
 
