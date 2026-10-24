@@ -22,6 +22,13 @@
       "when": 1792716276405,
       "tag": "0002_whatsapp",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792808682660,
+      "tag": "0003_chave_ativacao_donos",
+      "breakpoints": true
     }
   ]
 }
