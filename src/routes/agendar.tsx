@@ -47,11 +47,18 @@ function Agendar() {
     return new Date(hoje.getFullYear(), hoje.getMonth(), 1);
   }, []);
 
-  const ultimoMesDisponivel = useMemo(() => {
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    return new Date(hoje.getFullYear(), hoje.getMonth() + 11, 1);
+  // Permite agendamentos pelos próximos 12 meses, contados a partir de hoje.
+  const ultimoDiaDisponivel = useMemo(() => {
+    const limite = new Date();
+    limite.setHours(0, 0, 0, 0);
+    limite.setFullYear(limite.getFullYear() + 1);
+    return limite;
   }, []);
+
+  const ultimoMesDisponivel = useMemo(
+    () => new Date(ultimoDiaDisponivel.getFullYear(), ultimoDiaDisponivel.getMonth(), 1),
+    [ultimoDiaDisponivel],
+  );
 
   useEffect(() => {
     const t = setInterval(() => setAgora(new Date()), 30000);
@@ -174,7 +181,8 @@ function Agendar() {
               const ehMesAtual = x.getMonth() === mesAtual.getMonth();
               const fechado = !FUNCIONAMENTO[x.getDay()]?.abre;
               const selecionado = x.toDateString() === dataSelecionada.toDateString();
-              const habilitado = ehMesAtual && !fechado;
+              const dentroDoPrazo = x >= primeiroMesDisponivel && x <= ultimoDiaDisponivel;
+              const habilitado = ehMesAtual && !fechado && dentroDoPrazo;
 
               return (
                 <button
