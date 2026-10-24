@@ -22,13 +22,13 @@ export const SERVICOS: Servico[] = [
 
 // índice = dia da semana (0 = domingo)
 export const FUNCIONAMENTO: ({ dia: string; abre: string; fecha: string } | { dia: string; abre: null; fecha: null })[] = [
-  { dia: "Domingo", abre: "09:00", fecha: "20:00" },
+  { dia: "Domingo", abre: "07:00", fecha: "18:00" },
   { dia: "Segunda", abre: null, fecha: null },
-  { dia: "Terça", abre: "09:00", fecha: "20:00" },
-  { dia: "Quarta", abre: "09:00", fecha: "20:00" },
-  { dia: "Quinta", abre: "09:00", fecha: "20:00" },
-  { dia: "Sexta", abre: "09:00", fecha: "20:00" },
-  { dia: "Sábado", abre: "09:00", fecha: "20:00" },
+  { dia: "Terça", abre: "07:00", fecha: "18:00" },
+  { dia: "Quarta", abre: "07:00", fecha: "18:00" },
+  { dia: "Quinta", abre: "07:00", fecha: "18:00" },
+  { dia: "Sexta", abre: "07:00", fecha: "18:00" },
+  { dia: "Sábado", abre: "07:00", fecha: "18:00" },
 ];
 
 export const ALMOCO = { inicio: "12:00", fim: "13:00" };
@@ -45,7 +45,8 @@ export function grade(date: Date, duracao = 30, agora = new Date(), ocupados: { 
   const toMin = (s: string) => +s.slice(0, 2) * 60 + +s.slice(3);
   const out: Horario[] = [];
   const almIni = toMin(ALMOCO.inicio), almFim = toMin(ALMOCO.fim);
-  for (let m = toMin(f.abre); m + duracao <= toMin(f.fecha!); m += 30) {
+  // Intervalo de 1h a cada serviço: horários de hora em hora.
+  for (let m = toMin(f.abre); m + duracao <= toMin(f.fecha!); m += 60) {
     if (m < almFim && m + duracao > almIni) continue;
     const ini = new Date(date); ini.setHours(Math.floor(m / 60), m % 60, 0, 0);
     const fim = new Date(ini.getTime() + duracao * 60000);
