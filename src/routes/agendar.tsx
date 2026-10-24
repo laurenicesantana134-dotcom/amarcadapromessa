@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Header, WhatsFab } from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,6 +40,7 @@ function Agendar() {
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState("");
   const [feito, setFeito] = useState<string>();
+  const diaRef = useRef<HTMLHeadingElement>(null);
 
   const primeiroMesDisponivel = useMemo(() => {
     const hoje = new Date();
@@ -64,6 +65,12 @@ function Agendar() {
     const t = setInterval(() => setAgora(new Date()), 30000);
     return () => clearInterval(t);
   }, []);
+
+  useEffect(() => {
+    if (!servico) return;
+    setSel(servico);
+    diaRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [servico]);
 
   const d = dataSelecionada;
 
@@ -151,14 +158,14 @@ function Agendar() {
         <h2 className="mt-10 text-2xl">1. Serviço</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {SERVICOS.map((x) => (
-            <button key={x.id} onClick={() => { setSel(x.id); setHora(undefined); }} className={`${chip(sel === x.id)} text-left`}>
+            <button key={x.id} onClick={() => { setSel(x.id); setHora(undefined); diaRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }); }} className={`${chip(sel === x.id)} text-left`}>
               <div className="flex justify-between font-semibold"><span>{x.nome}</span><span className="text-primary">{brl(x.preco)}</span></div>
               <div className="text-xs text-muted-foreground">{dur(x.min)}</div>
             </button>
           ))}
         </div>
 
-        <h2 className="mt-10 text-2xl">2. Dia</h2>
+        <h2 ref={diaRef} id="passo-dia" className="mt-10 scroll-mt-24 text-2xl">2. Dia</h2>
         <div className="mt-4 rounded-2xl border border-border bg-card p-4">
           <div className="mb-4 flex items-center justify-between gap-3">
             <button type="button" onClick={recuarMes} disabled={mesAtual.getTime() <= primeiroMesDisponivel.getTime()} className="rounded-full border border-border p-2 text-muted-foreground transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-30" aria-label="Mês anterior">
