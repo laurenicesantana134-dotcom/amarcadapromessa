@@ -13,6 +13,8 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AgendarRouteImport } from './routes/agendar'
 import { Route as ContaRouteImport } from './routes/conta'
 import { Route as EntrarRouteImport } from './routes/entrar'
+import { Route as ApiPublicCronLembretesRouteImport } from './routes/api/public/cron/lembretes'
+import { Route as ApiPublicWhatsappWebhookRouteImport } from './routes/api/public/whatsapp/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +36,33 @@ const EntrarRoute = EntrarRouteImport.update({
   path: '/entrar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronLembretesRoute = ApiPublicCronLembretesRouteImport.update({
+  id: '/api/public/cron/lembretes',
+  path: '/api/public/cron/lembretes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicWhatsappWebhookRoute =
+  ApiPublicWhatsappWebhookRouteImport.update({
+    id: '/api/public/whatsapp/webhook',
+    path: '/api/public/whatsapp/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
   '/conta': typeof ContaRoute
   '/entrar': typeof EntrarRoute
+  '/api/public/cron/lembretes': typeof ApiPublicCronLembretesRoute
+  '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/agendar': typeof AgendarRoute
   '/conta': typeof ContaRoute
   '/entrar': typeof EntrarRoute
+  '/api/public/cron/lembretes': typeof ApiPublicCronLembretesRoute
+  '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +70,34 @@ export interface FileRoutesById {
   '/agendar': typeof AgendarRoute
   '/conta': typeof ContaRoute
   '/entrar': typeof EntrarRoute
+  '/api/public/cron/lembretes': typeof ApiPublicCronLembretesRoute
+  '/api/public/whatsapp/webhook': typeof ApiPublicWhatsappWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/agendar' | '/conta' | '/entrar'
+  fullPaths:
+    | '/'
+    | '/agendar'
+    | '/conta'
+    | '/entrar'
+    | '/api/public/cron/lembretes'
+    | '/api/public/whatsapp/webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/agendar' | '/conta' | '/entrar'
-  id: '__root__' | '/' | '/agendar' | '/conta' | '/entrar'
+  to:
+    | '/'
+    | '/agendar'
+    | '/conta'
+    | '/entrar'
+    | '/api/public/cron/lembretes'
+    | '/api/public/whatsapp/webhook'
+  id:
+    | '__root__'
+    | '/'
+    | '/agendar'
+    | '/conta'
+    | '/entrar'
+    | '/api/public/cron/lembretes'
+    | '/api/public/whatsapp/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +105,8 @@ export interface RootRouteChildren {
   AgendarRoute: typeof AgendarRoute
   ContaRoute: typeof ContaRoute
   EntrarRoute: typeof EntrarRoute
+  ApiPublicCronLembretesRoute: typeof ApiPublicCronLembretesRoute
+  ApiPublicWhatsappWebhookRoute: typeof ApiPublicWhatsappWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +139,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntrarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/lembretes': {
+      id: '/api/public/cron/lembretes'
+      path: '/api/public/cron/lembretes'
+      fullPath: '/api/public/cron/lembretes'
+      preLoaderRoute: typeof ApiPublicCronLembretesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/whatsapp/webhook': {
+      id: '/api/public/whatsapp/webhook'
+      path: '/api/public/whatsapp/webhook'
+      fullPath: '/api/public/whatsapp/webhook'
+      preLoaderRoute: typeof ApiPublicWhatsappWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +161,8 @@ const rootRouteChildren: RootRouteChildren = {
   AgendarRoute: AgendarRoute,
   ContaRoute: ContaRoute,
   EntrarRoute: EntrarRoute,
+  ApiPublicCronLembretesRoute: ApiPublicCronLembretesRoute,
+  ApiPublicWhatsappWebhookRoute: ApiPublicWhatsappWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
