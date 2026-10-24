@@ -9,8 +9,13 @@ export const Route = createFileRoute("/api/public/whatsapp/webhook")({
         const secret = process.env["WHATSAPP_API_KEY"];
         if (!secret) return new Response("WhatsApp não configurado", { status: 500 });
 
-        const verificacao = await verifyWebhookRequest(request, secret, { maxBodyBytes: 4 * 1024 * 1024 });
-        if (!verificacao.ok) return new Response("Assinatura inválida", { status: 401 });
+        let payload: unknown;
+        try {
+          const verificado = await verifyWebhookRequest({ req: request, secret, maxBodyBytes: 4 * 1024 * 1024 });
+          payload = verificado.payload;
+        } catch {
+          return new Response("Assinatura inválida", { status: 401 });
+        }
 
         const deliveryId = request.headers.get("x-lovable-delivery");
         const event = request.headers.get("x-lovable-event");
@@ -18,7 +23,6 @@ export const Route = createFileRoute("/api/public/whatsapp/webhook")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { aplicarStatus } = await import("@/lib/whatsapp.server");
-        const payload = verificacao.body as unknown;
 
         const { data: existente } = await supabaseAdmin
           .from("whatsapp_webhook_events")
