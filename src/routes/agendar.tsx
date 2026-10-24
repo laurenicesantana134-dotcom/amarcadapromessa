@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Header, WhatsFab } from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -24,8 +24,16 @@ function Agendar() {
   const { servico } = Route.useSearch();
   const { user, perfil, carregando } = useAuth();
   const [sel, setSel] = useState<string | undefined>(servico);
-  const [dias, setDias] = useState<Date[]>([]);
-  const [dia, setDia] = useState<number>(0);
+  const [mesAtual, setMesAtual] = useState<Date>(() => {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    return new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  });
+  const [dataSelecionada, setDataSelecionada] = useState<Date>(() => {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    return hoje;
+  });
   const [hora, setHora] = useState<string>();
   const [ocupados, setOcupados] = useState<{ inicio: Date; fim: Date }[]>([]);
   const [agora, setAgora] = useState(() => new Date());
@@ -33,24 +41,49 @@ function Agendar() {
   const [erro, setErro] = useState("");
   const [feito, setFeito] = useState<string>();
 
+  const primeiroMesDisponivel = useMemo(() => {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    return new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  }, []);
+
+  const ultimoMesDisponivel = useMemo(() => {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    return new Date(hoje.getFullYear(), hoje.getMonth() + 11, 1);
+  }, []);
+
   useEffect(() => {
-    const out: Date[] = [];
-    for (let i = 0; i < 14; i++) { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + i); out.push(d); }
-    setDias(out);
-    const first = out.findIndex((d) => FUNCIONAMENTO[d.getDay()]?.abre);
-    setDia(first < 0 ? 0 : first);
     const t = setInterval(() => setAgora(new Date()), 30000);
     return () => clearInterval(t);
   }, []);
 
-  const d = dias[dia];
+  const d = dataSelecionada;
+
+  const diasMes = useMemo(() => {
+    const inicio = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), 1);
+    const offset = inicio.getDay();
+    const inicioGrade = new Date(inicio);
+    inicioGrade.setDate(inicio.getDate() - offset);
+
+    return Array.from({ length: 42 }, (_, i) => {
+      const data = new Date(inicioGrade);
+      data.setDate(inicioGrade.getDate() + i);
+      return data;
+    });
+  }, [mesAtual]);
+
   const carregarOcupados = async () => {
     if (!d) return;
-    const fim = new Date(d); fim.setDate(fim.getDate() + 1);
+    const fim = new Date(d);
+    fim.setDate(fim.getDate() + 1);
     const { data } = await supabase.rpc("horarios_ocupados", { _de: d.toISOString(), _ate: fim.toISOString() });
     setOcupados((data ?? []).map((o) => ({ inicio: new Date(o.inicio), fim: new Date(o.fim) })));
   };
-  useEffect(() => { carregarOcupados(); }, [d]);
+
+  useEffect(() => {
+    carregarOcupados();
+  }, [d]);
 
   const s = SERVICOS.find((x) => x.id === sel);
   const horarios = useMemo(() => (d ? grade(d, s?.min ?? 30, agora, ocupados) : []), [d, s, agora, ocupados]);
@@ -71,6 +104,24 @@ function Agendar() {
   };
 
   const chip = (on: boolean) => `rounded-xl border px-4 py-3 text-sm transition ${on ? "border-primary bg-gold-soft text-primary" : "border-border bg-card hover:border-primary/50"}`;
+
+  const selecionarDia = (dia: Date) => {
+    const proximo = new Date(dia);
+    proximo.setHours(0, 0, 0, 0);
+    setDataSelecionada(proximo);
+    setHora(undefined);
+    setMesAtual(new Date(proximo.getFullYear(), proximo.getMonth(), 1));
+  };
+
+  const avancarMes = () => {
+    if (mesAtual.getTime() >= ultimoMesDisponivel.getTime()) return;
+    setMesAtual((atual) => new Date(atual.getFullYear(), atual.getMonth() + 1, 1));
+  };
+
+  const recuarMes = () => {
+    if (mesAtual.getTime() <= primeiroMesDisponivel.getTime()) return;
+    setMesAtual((atual) => new Date(atual.getFullYear(), atual.getMonth() - 1, 1));
+  };
 
   if (feito) return (
     <div className="min-h-screen"><Header />
@@ -101,16 +152,49 @@ function Agendar() {
         </div>
 
         <h2 className="mt-10 text-2xl">2. Dia</h2>
-        <div className="mt-4 flex gap-2 overflow-x-auto pb-2">
-          {dias.map((x, i) => {
-            const fechado = !FUNCIONAMENTO[x.getDay()]?.abre;
-            return (
-              <button key={i} disabled={fechado} onClick={() => { setDia(i); setHora(undefined); }} className={`${chip(dia === i)} min-w-16 text-center disabled:opacity-30`}>
-                <div className="text-xs uppercase">{x.toLocaleDateString("pt-BR", { weekday: "short" })}</div>
-                <div className="text-lg font-semibold">{x.getDate()}</div>
-              </button>
-            );
-          })}
+        <div className="mt-4 rounded-2xl border border-border bg-card p-4">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <button type="button" onClick={recuarMes} disabled={mesAtual.getTime() <= primeiroMesDisponivel.getTime()} className="rounded-full border border-border p-2 text-muted-foreground transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-30" aria-label="Mês anterior">
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <div className="text-lg font-semibold text-foreground">{mesAtual.toLocaleDateString("pt-BR", { month: "long", year: "numeric" })}</div>
+            <button type="button" onClick={avancarMes} disabled={mesAtual.getTime() >= ultimoMesDisponivel.getTime()} className="rounded-full border border-border p-2 text-muted-foreground transition hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-30" aria-label="Próximo mês">
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-7 gap-2 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((dia) => (
+              <div key={dia}>{dia}</div>
+            ))}
+          </div>
+
+          <div className="mt-3 grid grid-cols-7 gap-2">
+            {diasMes.map((x) => {
+              const ehMesAtual = x.getMonth() === mesAtual.getMonth();
+              const fechado = !FUNCIONAMENTO[x.getDay()]?.abre;
+              const selecionado = x.toDateString() === dataSelecionada.toDateString();
+              const habilitado = ehMesAtual && !fechado;
+
+              return (
+                <button
+                  key={x.toISOString()}
+                  type="button"
+                  onClick={() => habilitado && selecionarDia(x)}
+                  disabled={!habilitado}
+                  className={[
+                    "rounded-xl border p-2 text-sm transition min-h-14",
+                    selecionado ? "border-primary bg-gold-soft text-primary" : "border-border bg-card",
+                    ehMesAtual ? "text-foreground" : "text-muted-foreground/60",
+                    fechado ? "opacity-30" : "hover:border-primary/50",
+                    !habilitado ? "cursor-not-allowed" : "",
+                  ].join(" ")}
+                >
+                  <div className="font-semibold">{x.getDate()}</div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <h2 className="mt-10 text-2xl">3. Horário</h2>
@@ -128,7 +212,7 @@ function Agendar() {
           {!carregando && !user ? (
             <Link to="/entrar" className="block rounded-full bg-gradient-gold px-7 py-4 text-center font-semibold text-primary-foreground shadow-gold">Crie seu cadastro ou entre para confirmar</Link>
           ) : (
-            <button onClick={confirmar} disabled={!s || !escolhido || enviando} className="block w-full rounded-full bg-gradient-gold px-7 py-4 text-center font-semibold text-primary-foreground shadow-gold disabled:opacity-40">
+            <button onClick={confirmar} disabled={!s || !escolhido || enviando} className="block w-full rounded-full bg-gradient-gold px-7 py-4 text-center font-semibold text-primary-foreground shadow-gold disabled:cursor-not-allowed disabled:opacity-60">
               {enviando ? "Reservando..." : "Confirmar agendamento"}
             </button>
           )}
