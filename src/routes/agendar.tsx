@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
 import { Header, WhatsFab } from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { notificarAgendamento } from "@/lib/notificacoes.functions";
-import { SERVICOS, brl, dur, grade, FUNCIONAMENTO } from "@/lib/barbearia";
+import { SERVICOS, brl, dur, grade, FUNCIONAMENTO, waLink } from "@/lib/barbearia";
 
 export const Route = createFileRoute("/agendar")({
   validateSearch: (s: Record<string, unknown>): { servico?: string | undefined } => ({ servico: typeof s["servico"] === "string" ? (s["servico"] as string) : undefined }),
