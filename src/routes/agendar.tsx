@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
 import { Header, WhatsFab } from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { notificarAgendamento } from "@/lib/notificacoes.functions";
-import { SERVICOS, brl, dur, grade, FUNCIONAMENTO } from "@/lib/barbearia";
+import { SERVICOS, brl, dur, grade, FUNCIONAMENTO, waLink } from "@/lib/barbearia";
 
 export const Route = createFileRoute("/agendar")({
   validateSearch: (s: Record<string, unknown>): { servico?: string | undefined } => ({ servico: typeof s["servico"] === "string" ? (s["servico"] as string) : undefined }),
@@ -143,7 +143,14 @@ function Agendar() {
         <CheckCircle2 className="mx-auto h-14 w-14 text-primary" />
         <h1 className="mt-4 text-5xl">Horário reservado!</h1>
         <p className="mt-3 text-muted-foreground">{feito}. Se não puder comparecer, avise o profissional com antecedência.</p>
-        <Link to="/conta" className="mt-8 inline-block rounded-full bg-gradient-gold px-7 py-4 font-semibold text-primary-foreground shadow-gold">Ver meus agendamentos</Link>
+        <a
+          href={waLink(`Olá! Acabei de agendar pelo site.\n\nNome: ${perfil?.nome ?? ""}${perfil?.apelido ? ` (${perfil.apelido})` : ""}\nWhatsApp: ${perfil?.whatsapp ?? ""}\nAgendamento: ${feito}\n\nConfirmo minha presença.`)}
+          target="_blank" rel="noreferrer"
+          className="mt-8 flex items-center justify-center gap-2 rounded-full bg-whatsapp px-7 py-4 font-semibold text-whatsapp-foreground shadow-lg"
+        >
+          <MessageCircle className="h-5 w-5" /> Enviar confirmação no WhatsApp do profissional
+        </a>
+        <Link to="/conta" className="mt-4 inline-block rounded-full border border-primary/40 px-7 py-3 font-semibold">Ver meus agendamentos</Link>
       </main>
     </div>
   );
