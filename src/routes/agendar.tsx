@@ -41,6 +41,10 @@ function Agendar() {
   const [erro, setErro] = useState("");
   const [feito, setFeito] = useState<string>();
   const diaRef = useRef<HTMLHeadingElement>(null);
+  const horarioRef = useRef<HTMLHeadingElement>(null);
+  const confirmarRef = useRef<HTMLDivElement>(null);
+  const [alvoScroll, setAlvoScroll] = useState<"horario" | "confirmar" | null>(null);
+  const [versaoScroll, setVersaoScroll] = useState(0);
 
   const primeiroMesDisponivel = useMemo(() => {
     const hoje = new Date();
@@ -71,6 +75,15 @@ function Agendar() {
     setSel(servico);
     diaRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [servico]);
+
+  useEffect(() => {
+    if (!alvoScroll || versaoScroll === 0) return;
+    const quadro = window.requestAnimationFrame(() => {
+      const destino = alvoScroll === "horario" ? horarioRef.current : confirmarRef.current;
+      destino?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return () => window.cancelAnimationFrame(quadro);
+  }, [alvoScroll, versaoScroll]);
 
   const d = dataSelecionada;
 
@@ -125,6 +138,8 @@ function Agendar() {
     setDataSelecionada(proximo);
     setHora(undefined);
     setMesAtual(new Date(proximo.getFullYear(), proximo.getMonth(), 1));
+    setAlvoScroll("horario");
+    setVersaoScroll((versao) => versao + 1);
   };
 
   const avancarMes = () => {
@@ -219,18 +234,18 @@ function Agendar() {
           </div>
         </div>
 
-        <h2 className="mt-10 text-2xl">3. Horário</h2>
+        <h2 ref={horarioRef} id="passo-horario" className="mt-10 scroll-mt-24 text-2xl">3. Horário</h2>
         <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5">
           {horarios.length === 0 && <p className="col-span-full text-muted-foreground">Fechado neste dia.</p>}
           {horarios.map((h) => (
-            <button key={h.hora} disabled={!h.livre} onClick={() => setHora(h.hora)} className={`${chip(hora === h.hora)} disabled:cursor-not-allowed disabled:opacity-40`}>
+            <button key={h.hora} disabled={!h.livre} onClick={() => { setHora(h.hora); setAlvoScroll("confirmar"); setVersaoScroll((versao) => versao + 1); }} className={`${chip(hora === h.hora)} disabled:cursor-not-allowed disabled:opacity-40`}>
               <div className="font-semibold">{h.hora}</div>
               {!h.livre && <div className="text-[10px] uppercase tracking-wide">indisponível</div>}
             </button>
           ))}
         </div>
 
-        <div className="mt-10">
+        <div ref={confirmarRef} id="passo-confirmar" className="mt-10 scroll-mt-24">
           {!carregando && !user ? (
             <Link to="/entrar" className="block rounded-full bg-gradient-gold px-7 py-4 text-center font-semibold text-primary-foreground shadow-gold">Crie seu cadastro ou entre para confirmar</Link>
           ) : (
