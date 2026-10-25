@@ -82,7 +82,7 @@ export function InstalarApp({ className = "" }: { className?: string }) {
       {ajuda && (
         <section
           id="instrucoes-instalar-app"
-          className="mt-4 w-full max-w-md rounded-2xl border border-primary/30 bg-card p-5 text-left text-sm text-foreground shadow-lg"
+          className="mt-4 w-[min(90vw,28rem)] max-w-[90vw] rounded-2xl border border-primary/30 bg-card p-5 text-left text-sm text-foreground shadow-lg"
           aria-live="polite"
         >
           <div className="mb-3 flex items-center gap-2">
