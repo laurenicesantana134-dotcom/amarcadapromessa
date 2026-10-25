@@ -159,7 +159,7 @@ function Agendar() {
         <h1 className="mt-4 text-5xl">Horário reservado!</h1>
         <p className="mt-3 text-muted-foreground">{feito}. Se não puder comparecer, avise o profissional com antecedência.</p>
         <a
-          href={waLink(`Olá! Acabei de agendar pelo site.\n\nNome: ${perfil?.nome ?? ""}${perfil?.apelido ? ` (${perfil.apelido})` : ""}\nWhatsApp: ${perfil?.whatsapp ?? ""}\nAgendamento: ${feito}\n\nConfirmo minha presença.`)}
+          href={waLink(`Olá! Acabei de agendar pelo site.\n\nNome: ${perfil?.nome ?? ""}${perfil?.apelido ? ` (${perfil.apelido})` : ""}\nWhatsApp: ${perfil?.whatsapp ?? ""}\nAgendamento: ${feito}\n\n✅ Confirmo minha presença.`)}
           target="_blank" rel="noreferrer"
           className="mt-8 flex items-center justify-center gap-2 rounded-full bg-whatsapp px-7 py-4 font-semibold text-whatsapp-foreground shadow-lg"
         >
