@@ -49,6 +49,10 @@ function Index() {
             <a href={waLink()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-primary/40 px-7 py-4 font-semibold"><MessageCircle className="h-4 w-4 text-whatsapp" /> Falar no WhatsApp</a>
             <InstalarApp />
           </div>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <Link to="/entrar" search={{ modo: "entrar" }} className="rounded-full border border-primary/40 px-5 py-2.5 font-semibold">Já tenho conta · Entrar</Link>
+            <Link to="/entrar" search={{ modo: "cadastro" }} className="rounded-full border border-border px-5 py-2.5 font-semibold text-muted-foreground">Fazer cadastro</Link>
+          </div>
         </div>
       </section>
 
