@@ -17,10 +17,20 @@ export function Header() {
           </span>
         </Link>
         <div className="flex items-center gap-2">
-        {!carregando && (
-          <Link to={user ? "/conta" : "/entrar"} className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold">
-            <User className="h-4 w-4" /> {user ? "Minha conta" : "Criar cadastro"}
+        {!carregando && user && (
+          <Link to="/conta" className="inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold">
+            <User className="h-4 w-4" /> Minha conta
           </Link>
+        )}
+        {!carregando && !user && (
+          <>
+            <Link to="/entrar" search={{ modo: "entrar" }} className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 px-3 py-2 text-sm font-semibold">
+              <User className="h-4 w-4" /> Entrar
+            </Link>
+            <Link to="/entrar" search={{ modo: "cadastro" }} className="hidden rounded-full px-3 py-2 text-sm font-semibold sm:inline-flex">
+              Criar cadastro
+            </Link>
+          </>
         )}
         <Link to="/agendar" search={{}} className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-4 py-2 text-sm font-semibold text-primary-foreground shadow-gold">
           <CalendarCheck className="h-4 w-4" /> Agendar
