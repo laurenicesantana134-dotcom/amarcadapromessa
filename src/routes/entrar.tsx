@@ -15,6 +15,8 @@ export const Route = createFileRoute("/entrar")({
       { property: "og:description", content: "Crie seu cadastro ou entre na sua conta." },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>): { modo?: "entrar" | "cadastro" } =>
+    s.modo === "entrar" || s.modo === "cadastro" ? { modo: s.modo } : {},
   component: Entrar,
 });
 
@@ -29,7 +31,8 @@ const input = "w-full rounded-xl border border-input bg-card px-4 py-3 outline-n
 
 function Entrar() {
   const navigate = useNavigate();
-  const [modo, setModo] = useState<"entrar" | "cadastro">("cadastro");
+  const busca = Route.useSearch();
+  const [modo, setModo] = useState<"entrar" | "cadastro">(busca.modo ?? "cadastro");
   const [f, setF] = useState({ nome: "", apelido: "", whatsapp: "", senha: "" });
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
