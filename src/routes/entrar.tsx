@@ -16,7 +16,7 @@ export const Route = createFileRoute("/entrar")({
     ],
   }),
   validateSearch: (s: Record<string, unknown>): { modo?: "entrar" | "cadastro" } =>
-    s.modo === "entrar" || s.modo === "cadastro" ? { modo: s.modo } : {},
+    s["modo"] === "entrar" || s["modo"] === "cadastro" ? { modo: s["modo"] } : {},
   component: Entrar,
 });
 
