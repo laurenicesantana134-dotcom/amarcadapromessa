@@ -38,7 +38,7 @@ export function Aniversario() {
 
   const avaliar = (perfil: P | null) => {
     setP(perfil);
-    if (perfil?.nascimento && ehAniversario(perfil.nascimento)) {
+    if (perfil?.nascimento && naJanelaAniversario(perfil.nascimento)) {
       const k = `aniv-${perfil.id}-${hojeChave()}`;
       if (!localStorage.getItem(k)) setParabens(true);
     } else setParabens(false);
