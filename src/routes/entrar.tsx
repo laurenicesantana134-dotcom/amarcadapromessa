@@ -4,6 +4,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { emailDoWhats, soDigitos } from "@/hooks/useAuth";
+import { CampoNascimento, nascParaISO, type Nasc } from "@/components/CampoNascimento";
 import { notificarCadastro } from "@/lib/notificacoes.functions";
 
 export const Route = createFileRoute("/entrar")({
@@ -34,6 +35,7 @@ function Entrar() {
   const busca = Route.useSearch();
   const [modo, setModo] = useState<"entrar" | "cadastro">(busca.modo ?? "cadastro");
   const [f, setF] = useState({ nome: "", apelido: "", whatsapp: "", senha: "" });
+  const [nasc, setNasc] = useState<Nasc>({ dia: "", mes: "", ano: "" });
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
   const set = (k: keyof typeof f) => (e: React.ChangeEvent<HTMLInputElement>) => setF({ ...f, [k]: e.target.value });
@@ -46,11 +48,13 @@ function Entrar() {
       if (modo === "cadastro") {
         const r = cadastroSchema.safeParse(f);
         if (!r.success) { setErro(r.error.issues[0]?.message ?? "Dados inválidos"); return; }
+        const nascimento = nascParaISO(nasc);
+        if (!nascimento) { setErro("Informe sua data de aniversário (dia, mês e ano)"); return; }
         const w = soDigitos(r.data.whatsapp);
         const { error } = await supabase.auth.signUp({
           email: emailDoWhats(w),
           password: r.data.senha,
-          options: { emailRedirectTo: window.location.origin, data: { nome: r.data.nome, apelido: r.data.apelido, whatsapp: w } },
+          options: { emailRedirectTo: window.location.origin, data: { nome: r.data.nome, apelido: r.data.apelido, whatsapp: w, nascimento } },
         });
         if (error) { setErro(error.message.includes("registered") ? "Esse WhatsApp já tem cadastro. Use Entrar." : error.message); return; }
         notificarCadastro().catch(() => {});
@@ -79,6 +83,7 @@ function Entrar() {
             <>
               <input className={input} placeholder="Nome completo" value={f.nome} onChange={set("nome")} />
               <input className={input} placeholder="Apelido" value={f.apelido} onChange={set("apelido")} />
+              <CampoNascimento valor={nasc} onChange={setNasc} />
             </>
           )}
           <input className={input} placeholder="WhatsApp com DDD" inputMode="tel" value={f.whatsapp} onChange={set("whatsapp")} />

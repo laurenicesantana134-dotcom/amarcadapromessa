@@ -67,6 +67,7 @@ export type Database = {
           apelido: string
           created_at: string
           id: string
+          nascimento: string | null
           nome: string
           whatsapp: string
         }
@@ -74,6 +75,7 @@ export type Database = {
           apelido: string
           created_at?: string
           id: string
+          nascimento?: string | null
           nome: string
           whatsapp: string
         }
@@ -81,6 +83,7 @@ export type Database = {
           apelido?: string
           created_at?: string
           id?: string
+          nascimento?: string | null
           nome?: string
           whatsapp?: string
         }
