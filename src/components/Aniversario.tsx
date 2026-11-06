@@ -12,7 +12,9 @@ export function ehAniversario(nascimento: string, hoje = new Date()) {
 
 /** Dias entre hoje e o aniversário mais próximo (negativo = já passou). */
 export function diasParaAniversario(nascimento: string, hoje = new Date()) {
-  const [, m = 1, d = 1] = nascimento.split("-").map(Number);
+  const partes = nascimento.split("-").map(Number);
+  const m: number = partes[1] ?? 1;
+  const d: number = partes[2] ?? 1;
   const base = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
   const dia = (y: number) => {
     // 29/02 em ano não bissexto vira 28/02
