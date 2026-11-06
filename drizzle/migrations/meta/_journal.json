@@ -29,6 +29,13 @@
       "when": 1792808682660,
       "tag": "0003_chave_ativacao_donos",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793964355061,
+      "tag": "0004_perfil_nascimento",
+      "breakpoints": true
     }
   ]
 }
